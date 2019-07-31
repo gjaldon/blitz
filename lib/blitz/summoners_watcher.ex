@@ -3,7 +3,8 @@ defmodule Blitz.SummonersWatcher do
   require Logger
   alias Blitz.RiotApiClient
 
-  @interval :timer.minutes(1)
+  @interval Application.get_env(:blitz, :poll_summoner_interval)
+  @watcher_lifetime Application.get_env(:blitz, :watcher_lifetime)
 
   def start_link(_, args) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)

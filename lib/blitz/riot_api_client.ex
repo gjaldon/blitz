@@ -2,11 +2,10 @@ defmodule Blitz.RiotApiClient do
   use Tesla
   require Logger
 
-  @api_key "RGAPI-d4868ec3-d435-4abe-83c7-6cdf0c130e30"
-  @max_retries 10
+  @max_retries Application.get_env(:blitz, :max_retries)
 
-  plug(Tesla.Middleware.BaseUrl, "https://na1.api.riotgames.com")
-  plug(Tesla.Middleware.Query, api_key: @api_key)
+  plug(Tesla.Middleware.BaseUrl, Application.get_env(:blitz, :riot_api_base_url))
+  plug(Tesla.Middleware.Query, api_key: Application.get_env(:blitz, :api_key))
   plug(Tesla.Middleware.JSON)
 
   def get_summoner_by_summoner_name(summoner_name) do

@@ -8,6 +8,7 @@ defmodule Blitz.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: Blitz.Worker.start_link(arg)
+      Blitz.DynamicSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

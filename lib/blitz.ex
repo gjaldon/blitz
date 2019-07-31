@@ -2,6 +2,14 @@ defmodule Blitz do
   import Blitz.RiotApiClient
   alias Blitz.DynamicSupervisor
 
+  @doc """
+  Given a valid `summoner_name`, this function will fetch all summoners this
+  summoner has played with in the last 5 matches. Once fetched, these summoners
+  will be monitored for new matches every minute in the next 5 hours.
+
+  When a summoner plays a new match, the match id is logged to the console.
+  This functions returns a map of format `%{summoner_1: %{info: info, matches: matches}, ...}`.
+  """
   def find_recently_played_with_matches(summoner_name) do
     with %{"accountId" => account_id} <- get_summoner_by_summoner_name(summoner_name),
          %{"matches" => matches} <- get_recent_matches(account_id, 5) do

@@ -3,6 +3,16 @@ defmodule Blitz.SummonersWatcher do
   require Logger
   alias Blitz.RiotApiClient
 
+  @moduledoc """
+  This GenServer monitors a list of summoners for new matches every configured interval.
+  By default, it will check all summoners' matches every minute for the next 5 hours.
+
+  Configurable options are:
+  `:poll_summoner_interval` - sets the interval when all summoners' are checked for new matches
+  `:watcher_lifetime` - sets the maximum number of intervals. once this has been reached, summoners
+  will no longer checked for new matches.
+  """
+
   @interval Application.get_env(:blitz, :poll_summoner_interval)
   @watcher_lifetime Application.get_env(:blitz, :watcher_lifetime)
 
@@ -14,7 +24,7 @@ defmodule Blitz.SummonersWatcher do
     GenServer.call(__MODULE__, :inspect)
   end
 
-  def check_summoner_games(last_matches_by_summoner) do
+  def check_summoner_matches(last_matches_by_summoner) do
     Enum.reduce(last_matches_by_summoner, last_matches_by_summoner, fn {account_id, prev_match},
                                                                        last_matches_by_summoner ->
       %{"matches" => [last_match]} = RiotApiClient.get_recent_matches(account_id, 1)
@@ -24,6 +34,8 @@ defmodule Blitz.SummonersWatcher do
           last_match["gameId"]
         }"
       )
+
+      Process.sleep(50)
 
       if last_match != prev_match do
         Logger.info("======= New match with id: #{last_match["gameId"]} =======")
@@ -51,7 +63,7 @@ defmodule Blitz.SummonersWatcher do
     if state.timer_counter < @watcher_lifetime do
       Process.send_after(__MODULE__, :poll_summoner, @interval)
 
-      last_matches_by_summoner = check_summoner_games(state.last_matches_by_summoner)
+      last_matches_by_summoner = check_summoner_matches(state.last_matches_by_summoner)
 
       new_state = %{
         state

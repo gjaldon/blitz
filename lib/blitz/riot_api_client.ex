@@ -2,6 +2,14 @@ defmodule Blitz.RiotApiClient do
   use Tesla
   require Logger
 
+  @moduledoc """
+  This api client respects the Riot API's rate limits. Once the rate limit has
+  been reached, the request will be retried after the specified number of
+  seconds in Riot's "retry-after" header that it sends in its 429 response.
+
+  All requests sent to the Riot API will have this retry functionality.
+  """
+
   @max_retries Application.get_env(:blitz, :max_retries)
 
   plug(Tesla.Middleware.BaseUrl, Application.get_env(:blitz, :riot_api_base_url))

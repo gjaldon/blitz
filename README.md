@@ -1,21 +1,12 @@
-# Blitz
+## Usage
 
-**TODO: Add description**
+Given a valid `summoner_name`, this function will fetch all summoners this
+summoner has played with in the last 5 matches. Once fetched, these summoners
+will be monitored for new matches every minute in the next 5 hours.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `blitz` to your list of dependencies in `mix.exs`:
+When a summoner plays a new match, the match id is logged to the console.
+This functions returns a map of format `%{summoner_1: %{info: info, matches: matches}, ...}`.
 
 ```elixir
-def deps do
-  [
-    {:blitz, "~> 0.1.0"}
-  ]
-end
+iex> Blitz.find_recently_played_with_matches("RiotSchmick")
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/blitz](https://hexdocs.pm/blitz).
-
